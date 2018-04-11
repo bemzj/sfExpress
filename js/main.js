@@ -116,13 +116,14 @@ function gameStart(){
 	    		player.index++;
 	    		player.y -= 35;
 		    	player.x -=  48;
-//		    	player.childList[0].bitmap.setAction(1,1);
+		    	player.setLeft();
 		    	//判断是否在砖块上面
 				if(player.hitTestObject(brickArray[player.index]))
 	    		{
-	
+					sum += brickArray[player.index].score;
 	    		}else{
-	    			player.fall(0.5,500);	    			
+	    			player.fall(0.5,500);
+	    			alert(sum);
 	    		}
 		    	if(player.index-startI>3)
 		    	{
@@ -152,12 +153,12 @@ function gameStart(){
 	    	{
 		    	player.index++;
 		    	player.y -= 50;
-		    	player.x +=  34;
-//		    	player.childList[0].bitmap.setAction(1,2);
+		    	player.x += 34;
+				player.setRight();
 		    	//判断是否在砖块上面
 		    	if(player.hitTestObject(brickArray[player.index]))
 	    		{
-	    			
+	    			sum += brickArray[player.index].score;
 	    		}else{
 	    			player.fall(0.5,400);
 	    		}    	
@@ -189,7 +190,7 @@ function setBrick(controlLeft,controlRight,Lspite,score,delay,brickArray){
 	var blWidth = 48;
 	var blHeight = 35;
 	//随机分数
-//	var rScore = Math.random()*
+	score = randomScore(5,5);
 	n = brickArray.length;
 	if(positionX + brWidth > controlRight) {
 		positionX -= blWidth;
@@ -235,9 +236,9 @@ function set(n,controlLeft,controlRight,Lspite,pLayer,score,delay,brickArray){
 	var blWidth =  48;
 	var blHeight = 35;
 	var renOffsetX = -2;
-	var renOffsetY =61;
-	
+	var renOffsetY =61;	
 	for(var i = 0; i < n; i++) {
+		score = randomScore(5,5);
 		if(i == 0) {
 			brickArray[i] = new brick(positionX, positionY,score,delay,0,i);		
 			player = new person(positionX-renOffsetX, positionY-renOffsetY,0)

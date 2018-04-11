@@ -8,6 +8,7 @@ var brickLayer;
 var player;
 var perLayer;
 var myTimer;
+var sum = 0;
 //加载页面的图片
 var loadImg = [
 	{path:url+'img/shouye_bg.png',type:'img',name:'shouye_bg'},	
@@ -34,3 +35,7 @@ function loadImging(){
 }
 
 
+//随机数
+function randomScore(startNumber,range){
+	return startNumber+parseInt(Math.random()*range);
+}
