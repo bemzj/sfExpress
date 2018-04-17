@@ -8,7 +8,6 @@ var brickLayer;
 var player;
 var perLayer;
 var myTimer;
-var sum = 0;
 //加载页面的图片
 var loadImg = [
 	{path:url+'img/shouye_bg.png',type:'img',name:'shouye_bg'},	
@@ -18,6 +17,7 @@ var imgAll = [
 	{path:url+'img/shouye_bg.png',type:'img',name:'shouye_bg'},
 	{path:url+'img/brick.png',type:'img',name:'brick'},
 	{path:url+'img/ren.png',type:'img',name:'ren'},
+	{path:url+'img/share1.png',type:'img',name:'share1'},//分享
 ];
 //游戏初始化
 LInit(1000 / 40, "fengE", 640, 1040, main);
@@ -35,7 +35,3 @@ function loadImging(){
 }
 
 
-//随机数
-function randomScore(startNumber,range){
-	return startNumber+parseInt(Math.random()*range);
-}
