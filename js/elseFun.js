@@ -57,7 +57,7 @@ function showList(){
 	html += '<img src="img/sort8.png" /></div></div><div class="sortBack"><img src="img/sort10.png" /><div class="sortList">';
 	html += '</div></div><a href="##" class="backHome  animated fadeInUp"><img src="img/sort6.png" /></a></div>';
 	$('body').append(html);
-	$.get('http://192.168.0.102/e/public/index.php/api/gamerApi/getRankingList',function(data){
+	$.get('http://192.168.0.101/e/public/index.php/api/gamerApi/getRankingList',function(data){
 		
 		var data = JSON.parse(data);
 		
@@ -93,9 +93,11 @@ function showList(){
 			inHmtl += '</div></div>';
 			$('.sortList').append(inHmtl);
 		}
-	})
+	});
+	$('.backHome').on('touchstart',function(){
+		$(this).parents('#sort').remove();
+	});
 }
-showRule();
 //显示游戏规则
 function showRule(){
 	$('#rule').remove();
@@ -109,6 +111,10 @@ function showRule(){
 	html += '<div class="circle2"><img src="img/circle2.png" /></div>';
 	html += '<div class="circle3"><img src="img/circle3.png" /></div>';
 	$('body').append(html);
+	$('.rule5 ').on('touchstart',function(){
+		$('#rule').remove();
+		
+	});
 }
 $(function(){
 	

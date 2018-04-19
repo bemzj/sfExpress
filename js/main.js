@@ -33,11 +33,14 @@ function music(){
 		}
 	});
 }
-
+function startGame(res){
+	imgList = res;
+	getResult(-1);
+}
 //首页
 function homepage(res){
-	imgList = res;
-	gameStart();
+	
+//	gameStart();
 //	sharing();
 //	noChange(2,"您今天挑战机会用完了，</br>请明天再来吧。","很抱歉");
 }

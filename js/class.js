@@ -38,9 +38,10 @@ function person(x,y,index,status)
 	self.y = y;//纵坐标
 	self.index = index;//位置
 	self.status = status;//是否开启点击
-	var list = LGlobal.divideCoordinate(130,85,1,2);
-    var data = new LBitmapData(imgList['ren'],0,0,75,85);
-    self.bitmap = new LAnimation(self,data,list);
+//	var list = LGlobal.divideCoordinate(130,85,1,2);
+//  var data = new LBitmapData(imgList['ren'],0,0,75,85);
+//  self.bitmap = new LAnimation(self,data,list);   
+    self.bitmap = getBitmap(imgList['ren']);
 	//图片
 	self.addChild(self.bitmap);
 }
