@@ -35,14 +35,108 @@ function music(){
 }
 function startGame(res){
 	imgList = res;
-	getResult(-1);
+	homepage();
+	
+	
 }
 //首页
-function homepage(res){
+function homepage(){
+	LTweenLite.pauseAll();	
+	backLayer.removeAllChild();
+	backLayer.die();
+	//首页层
+	var rLayer = new LSprite();
+	backLayer.addChild(rLayer);
+	rLayer.addChild(getBitmap(imgList['back']));
+	//首页层
+	var nochage1 = getBitmap(imgList['home1']);
+	nochage1.x = 78;
+	nochage1.y = 77;
+	rLayer.addChild(nochage1);
+	bigAndSmall(nochage1,2,2,1.5,0.02,0,true);
 	
-//	gameStart();
-//	sharing();
-//	noChange(2,"您今天挑战机会用完了，</br>请明天再来吧。","很抱歉");
+	var nochage2 = getBitmap(imgList['home2']);
+	nochage2.x = 74;
+	nochage2.y = 735;
+	rLayer.addChild(nochage2);
+	var transParams = {
+		type: LTransition.Fly,
+		startPoint: 5,
+		duration: 1,
+		direction: LTransition.IN,
+		easing: Strong.easeOut
+	};
+	LTransitionManager.start(nochage2, transParams);
+	
+	var result2 = getButton(imgList['home3']);
+	result2.x = rCenterWidth(result2);
+	result2.y = 902;
+	rLayer.addChild(result2);
+	bigAndSmall(result2,2,2,1.5,0.02,0,true);
+	result2.addEventListener(LMouseEvent.MOUSE_DOWN,gameStart);
+	
+	var result3 = getButton(imgList['home4']);
+	result3.x = 83;
+	result3.y = 1070;
+	rLayer.addChild(result3);
+	bigAndSmall(result3,2,2,1.5,0.02,0,true);
+	result3.addEventListener(LMouseEvent.MOUSE_DOWN,showRule);
+	
+	var result4 = getButton(imgList['home5']);
+	result4.x = 398;
+	result4.y = 1070;
+	rLayer.addChild(result4);
+	result4.addEventListener(LMouseEvent.MOUSE_DOWN,showList);
+	
+	var circle1 = getBitmap(imgList['circle1']);
+	circle1.x = 85;
+	circle1.y = 160;
+	rLayer.addChild(circle1);
+	LTweenLite.to(circle1,3.0,{rotate:-360,loop:true,onComplete:function(){
+		circle1.rotate = 0;
+	}});
+	
+	var circle2 = getBitmap(imgList['circle2']);
+	circle2.x = 603;
+	circle2.y = 74;
+	rLayer.addChild(circle2);
+	bigAndSmall(circle2,2,2,1.5,0.2,0,true);
+	
+	var circle3 = getBitmap(imgList['circle3']);
+	circle3.x = 645;
+	circle3.y = 650;
+	rLayer.addChild(circle3);
+	bigAndSmall(circle3,2,2,1.0,0.2,0,true);
+	
+	var circle4 = getBitmap(imgList['circle4']);
+	circle4.x = 80;
+	circle4.y = 365;
+	rLayer.addChild(circle4);
+	bigAndSmall(circle4,2,2,2,0.2,0,true);
+	
+	var circle5 = getBitmap(imgList['circle5']);
+	circle5.x = 570;
+	circle5.y = 195;
+	rLayer.addChild(circle5);
+	LTweenLite.to(circle5,1.5,{rotate:360,loop:true,onComplete:function(){
+		circle5.rotate = 0;
+	}});
+	
+	var circle6 = getBitmap(imgList['circle6']);
+	circle6.x = 627;
+	circle6.y = 294;
+	rLayer.addChild(circle6);
+	LTweenLite.to(circle6,2.0,{rotate:-360,loop:true,onComplete:function(){
+		circle6.rotate = 0;
+	}});
+	
+	var circle7 = getBitmap(imgList['circle7']);
+	circle7.x = 62;
+	circle7.y = 680;
+	rLayer.addChild(circle7);
+	LTweenLite.to(circle7,2.5,{rotate:360,loop:true,onComplete:function(){
+		circle7.rotate = 0;
+	}});
 }
 //开始游戏
 function gameStart(){
@@ -51,7 +145,7 @@ function gameStart(){
 	backLayer.die();
 	backLayer.removeAllChild();
 	//设置首页背景
-	var bitmap = getBitmap(imgList['shouye_bg']);
+	var bitmap = getBitmap(imgList['gameBack']);
 	backLayer.addChild(bitmap);
 	//砖头层
  	brickLayer = new LSprite();
@@ -105,7 +199,7 @@ function gameStart(){
 	    		
 	    	}
 	    });
-	    myTimer.start();
+//	    myTimer.start();
 	    //设置人+砖头
 		set(startNumber,winLeft,winRight,brickLayer,perLayer,score,delayTime,brickArray);
 		//开启点击事件
@@ -118,15 +212,16 @@ function gameStart(){
 	    	if(player.status==true)
 	    	{
 	    		player.index++;
-	    		player.y -= 35;
-		    	player.x -=  48;
+	    		player.y -= 62;
+		    	player.x -= 50;
 //		    	player.childList[0].bitmap.setAction(1,1);
 		    	//判断是否在砖块上面
 				if(player.hitTestObject(brickArray[player.index]))
 	    		{
 	
 	    		}else{
-	    			player.fall(0.5,500);	    			
+	    			player.fall(0.5,500);
+	    			getResult(10);
 	    		}
 		    	if(player.index-startI>3)
 		    	{
@@ -155,8 +250,8 @@ function gameStart(){
 	    	if(player.status==true)
 	    	{
 		    	player.index++;
-		    	player.y -= 50;
-		    	player.x +=  34;
+		    	player.y -= 62;
+		    	player.x += 50;
 //		    	player.childList[0].bitmap.setAction(1,2);
 		    	//判断是否在砖块上面
 		    	if(player.hitTestObject(brickArray[player.index]))
@@ -164,6 +259,7 @@ function gameStart(){
 	    			
 	    		}else{
 	    			player.fall(0.5,400);
+	    			getResult(10);
 	    		}    	
 		    	if(player.index-startI>3)
 		    	{
@@ -188,10 +284,10 @@ function gameStart(){
 //设置砖头
 function setBrick(controlLeft,controlRight,Lspite,score,delay,brickArray){
 	//砖头相对变量
-	var brWidth = 34;
-	var brHeight = 50;
-	var blWidth = 48;
-	var blHeight = 35;
+	var brWidth = 50;
+	var brHeight = 62;
+	var blWidth = 50;
+	var blHeight = 62;
 	//随机分数
 //	var rScore = Math.random()*
 	n = brickArray.length;
@@ -234,12 +330,12 @@ function set(n,controlLeft,controlRight,Lspite,pLayer,score,delay,brickArray){
 	 */
 	
 	//砖头相对变量
-	var brWidth = 34;
-	var brHeight = 50;
-	var blWidth =  48;
-	var blHeight = 35;
-	var renOffsetX = -2;
-	var renOffsetY =61;
+	var brWidth = 50;
+	var brHeight = 62;
+	var blWidth = 50;
+	var blHeight = 62;
+	var renOffsetX = -10;
+	var renOffsetY =90;
 	
 	for(var i = 0; i < n; i++) {
 		if(i == 0) {

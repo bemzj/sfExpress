@@ -48,6 +48,7 @@ function getResult(total){
 	setTimeout(function(){
 		bigAndSmall(result2,2,2,1.5,0.02,0,true);
 	},750);
+	result2.addEventListener(LMouseEvent.MOUSE_DOWN,gameStart);
 	
 	var result3 = getButton(imgList['result3']);
 	result3.x = rCenterWidth(result3);
