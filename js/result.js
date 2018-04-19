@@ -60,10 +60,16 @@ function getResult(total){
 	});
 	
 	var result4 = getButton(imgList['result4']);
-	result4.x = rCenterWidth(result4);
+	result4.x = 75;
 	result4.y = 1076;
 	rLayer.addChild(result4);
 	result4.addEventListener(LMouseEvent.MOUSE_DOWN,showList);
+	
+	var result5 = getButton(imgList['result5']);
+	result5.x = 400;
+	result5.y = 1076;
+	rLayer.addChild(result5);
+	result5.addEventListener(LMouseEvent.MOUSE_DOWN,sharing);
 	
 	var circle1 = getBitmap(imgList['circle1']);
 	circle1.x = 250;

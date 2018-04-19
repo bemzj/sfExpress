@@ -33,8 +33,16 @@ function music(){
 		}
 	});
 }
+var maxNum = 15;
+var minNum = 5;
+var scc;
 function startGame(res){
 	imgList = res;
+	$.get('http://192.168.0.102/e/public/index.php/api/ruleApi/getGoldMinMax',function(data){
+		var data = JSON.parse(data);
+		maxNum = data.max_value;
+		minNum = data.min_value;
+	});
 	homepage();
 	
 	
@@ -151,14 +159,19 @@ function gameStart(){
  	brickLayer = new LSprite();
 	backLayer.addChild(brickLayer);
 	brickLayer.removeAllChild();
-	
+	LTweenLite.pauseAll();
 	//人物层
 	perLayer = new LSprite();
 	backLayer.addChild(perLayer);
 	perLayer.removeAllChild();
+	//分数
+	scoreLayer = new LSprite();
+	backLayer.addChild(scoreLayer);
+	scc = new scoreBacks(410,30,0);
+	backLayer.addChild(scc);
 	//初始数据
 	var startX = 240; //砖头开始位置横坐标
-	var startY = 760; //砖头开始位置纵坐标
+	var startY = 1110; //砖头开始位置纵坐标
 	var startNumber = 20; //砖头数量
 	var winLeft = 65; //可视区域左边距离
 	var winRight = 560; //可视区域右边距离
@@ -166,28 +179,35 @@ function gameStart(){
 	var score = 1;//得分
 	var people;//人
 	var brickArray = [];//砖块数组
+	var brickArr = [];//非转
 	var startI = 0;
 	positionX = startX;
 	positionY = startY;
 	var grade = 0;//等级
+	var gradelabal = 5;
 	var difficult ;//难度数组
+	var addScore = ["五星能量站","百人企业"];
+	var renScore = ["一星能量站","企业不足30人"];
 	player = null; // 人
 	myTimer = null; //循环时间
+	
+	
 	$.get('json/difficulty.json',function(data){
 		difficult = data.diff;
-		
-		//每次增加砖头+砖头往下掉		
+	   //每次增加砖头+砖头往下掉		
 	    myTimer = new LTimer(difficult[grade][1], 0);
 	    grade++;
-	    myTimer.addEventListener(LTimerEvent.TIMER, function(){
+	    myTimer.addEventListener(LTimerEvent.TIMER,function(){
+	    	
 	    	if(player.index-startI<=3)
 		    {
-		    	setBrick(winLeft,winRight,brickLayer,score,delayTime,brickArray);
+		    	setBrick(winLeft,winRight,brickLayer,score,delayTime,brickArray,brickArr);
+		    	brickArr[startI].fall(0.5,500);
 		    	brickArray[startI].fall(0.5,500);
 		    	LTweenLite.to(brickLayer,0.1,{y:brickLayer.y+brickArray[startI].increment});
 				LTweenLite.to(perLayer,0.1,{y:brickLayer.y+brickArray[startI].increment});
 	    		startI++;
-	    		if(grade<5)
+	    		if(grade<gradelabal)
 	    		{
 	    			if(startI>difficult[grade][0])
 		    		{
@@ -199,38 +219,56 @@ function gameStart(){
 	    		
 	    	}
 	    });
-//	    myTimer.start();
+	    
+
+	   	
 	    //设置人+砖头
-		set(startNumber,winLeft,winRight,brickLayer,perLayer,score,delayTime,brickArray);
-		//开启点击事件
-		player.status = true;
+		set(startNumber,winLeft,winRight,brickLayer,perLayer,score,delayTime,brickArray,brickArr);
+		
 		//左点击事件
 	    var leftClick = new LSprite();
 	    backLayer.addChild(leftClick);
 	    leftClick.graphics.drawRect(0,'#000000',[0,0,LGlobal.width/2,LGlobal.height],false,'#000000');
 	    leftClick.addEventListener(LMouseEvent.MOUSE_DOWN,function(){
+	    	
 	    	if(player.status==true)
 	    	{
 	    		player.index++;
 	    		player.y -= 62;
 		    	player.x -= 50;
-//		    	player.childList[0].bitmap.setAction(1,1);
-		    	//判断是否在砖块上面
-				if(player.hitTestObject(brickArray[player.index]))
+		    	player.bitmap1.visible =  false;
+		    	player.bitmap.visible = true;
+		    	if(Math.random()>0.5)
+		    	{
+		    		var rnd = 1;
+		    	}else{
+		    		var rnd = 0;
+		    	}
+				//判断是否在砖块上面
+		    	if(player.shape.hitTestObject(brickArray[player.index]))
+		    	{
+		    		scc.childList[1].childList["0"].text += parseInt(brickArray[player.index].score);
+		    		player.removeBmp();
+		    		player.show(addScore[rnd]+' +'+parseInt(brickArray[player.index].score));
+		    	}
+		    	else if(player.shape.hitTestObject(brickArr[player.index])&&brickArr[player.index].visible!=false)
 	    		{
-	
+	    			scc.childList[1].childList["0"].text += parseInt(brickArr[player.index].score);
+	    			player.removeBmp();
+	    			player.show(renScore[rnd]+' -'+parseInt(brickArr[player.index].score));
 	    		}else{
-	    			player.fall(0.5,500);
-	    			getResult(10);
-	    		}
+	    			player.fall(0.5,400);
+	    		} 
 		    	if(player.index-startI>3)
 		    	{
-		    		setBrick(winLeft,winRight,brickLayer,score,delayTime,brickArray);
+		    		setBrick(winLeft,winRight,brickLayer,score,delayTime,brickArray,brickArr);
+		
+		    		brickArr[startI].fall(0.5,500);
 		    		brickArray[startI].fall(0.5,500);
 		    		LTweenLite.to(brickLayer,0.1,{y:brickLayer.y+brickArray[startI].increment});
 					LTweenLite.to(perLayer,0.1,{y:brickLayer.y+brickArray[startI].increment});
 	    			startI++;
-	    			if(grade<5)
+	    			if(grade<gradelabal)
 		    		{
 		    			if(startI>difficult[grade][0])
 			    		{
@@ -252,23 +290,39 @@ function gameStart(){
 		    	player.index++;
 		    	player.y -= 62;
 		    	player.x += 50;
-//		    	player.childList[0].bitmap.setAction(1,2);
+		    	player.bitmap1.visible = true;
+		    	player.bitmap.visible = false;
+		    	if(Math.random()>0.5)
+		    	{
+		    		var rnd = 1;
+		    	}else{
+		    		var rnd = 0;
+		    	}
 		    	//判断是否在砖块上面
-		    	if(player.hitTestObject(brickArray[player.index]))
+		    	if(player.shape.hitTestObject(brickArray[player.index]))
+		    	{
+		    		
+		    		scc.childList[1].childList["0"].text += parseInt(brickArray[player.index].score);
+		    		player.removeBmp();
+		    		player.show(addScore[rnd]+' +'+parseInt(brickArray[player.index].score));
+		    	}
+		    	else if(player.shape.hitTestObject(brickArr[player.index])&&brickArr[player.index].visible!=false)
 	    		{
-	    			
+	    			scc.childList[1].childList["0"].text += parseInt(brickArr[player.index].score);
+	    			player.removeBmp();
+	    			player.show(renScore[rnd]+' -'+parseInt(brickArr[player.index].score));
 	    		}else{
 	    			player.fall(0.5,400);
-	    			getResult(10);
 	    		}    	
 		    	if(player.index-startI>3)
 		    	{
-		    		setBrick(winLeft,winRight,brickLayer,score,delayTime,brickArray);
+		    		setBrick(winLeft,winRight,brickLayer,score,delayTime,brickArray,brickArr);
+		    		brickArr[startI].fall(0.5,500);
 		    		brickArray[startI].fall(0.5,500);
 		    		LTweenLite.to(brickLayer,0.1,{y:brickLayer.y+brickArray[startI].increment});
 					LTweenLite.to(perLayer,0.1,{y:brickLayer.y+brickArray[startI].increment});
 	    			startI++;
-	    			if(grade<5)
+	    			if(grade<gradelabal)
 		    		{
 		    			if(startI>difficult[grade][0])
 			    		{
@@ -279,44 +333,98 @@ function gameStart(){
 		    	}
 		    }
 	    });
+	    //提示
+		var tip = new LSprite();
+		tip.graphics.drawRect(0, "#000000", [0, 0, LGlobal.width, LGlobal.height], true, "rgba(0,0,0,0.5)");
+		tip.addEventListener(LMouseEvent.MOUSE_DOWN,function(){
+			tip.removeEventListener(LMouseEvent.MOUSE_DOWN);
+			
+			player.status = true;
+			myTimer.start();
+			tip.remove();
+		});
+		backLayer.addChild(tip);
+		var lhand = getBitmap(imgList['lhand']);
+		lhand.y = 970;
+		lhand.x = 78;
+		tip.addChild(lhand);
+		LTweenLite.to(lhand,0.7,{x:48,y:1000,loop:true}).to(lhand,0.7,{x:58,y:970});
+		
+		var rhand = getBitmap(imgList['rhand']);
+		rhand.y = 970;
+		rhand.x = 493;
+		tip.addChild(rhand);
+		LTweenLite.to(rhand,0.7,{x:523,y:1000,loop:true}).to(rhand,0.7,{x:493,y:970});
 	});   
 }
 //设置砖头
-function setBrick(controlLeft,controlRight,Lspite,score,delay,brickArray){
+function setBrick(controlLeft,controlRight,Lspite,score,delay,brickArray,arr){
 	//砖头相对变量
 	var brWidth = 50;
 	var brHeight = 62;
 	var blWidth = 50;
 	var blHeight = 62;
+	var px;
+	var py;
+	var pr = 0.7;
+	var rdom = Math.random();
+	px = positionX;
+	py = positionY;
 	//随机分数
-//	var rScore = Math.random()*
 	n = brickArray.length;
 	if(positionX + brWidth > controlRight) {
 		positionX -= blWidth;
 		positionY -= blHeight;
 		brickArray[n - 1].increment = blHeight;
+		if(rdom > pr) {
+			px += brWidth;
+			py -= brHeight;
+		}
 	} else if(positionX - blWidth < controlLeft) {
 		positionX += brWidth;
 		positionY -= brHeight;
 		brickArray[n - 1].increment = brHeight;
+		if(rdom > pr) {
+			px -= blWidth;
+			py -= blHeight;
+		}
 	} else {
 		var rd = Math.random();
 		if(rd > 0.5) {
 			positionX += brWidth;
 			positionY -= brHeight;
 			brickArray[n - 1].increment = brHeight;
+			if(rdom > pr) {
+				px -= blWidth;
+				py -= blHeight;
+			}
 		} else {
 			positionX -= blWidth;
 			positionY -= blHeight;
-			increment = blHeight;
+			if(rdom > pr) {
+				px += brWidth;
+				py -= brHeight;
+			}
 			brickArray[n - 1].increment = blHeight;
 		}
 	}
-	brickArray[n] = new brick(positionX, positionY, score, delay,0,n);
+	var bscore = 1+parseInt(Math.random()*(maxNum-1));
+	brickArray[n] = new brick(positionX, positionY, bscore, delay,0,n,'brick');
 	Lspite.addChild(brickArray[n]);
+	if(rdom > pr) {
+		var bscore = -1+parseInt(Math.random()*(minNum+1));
+		arr[n] = new brick(px, py, bscore, delay, 0, n, 'brick1');
+		arr[n].increment = brHeight;
+		Lspite.addChild(arr[n]);
+	} else {
+		arr[n] = new brick(px, py, score, delay, 0, n, 'brick1');
+		arr[n].increment = brHeight;
+		arr[n].visible = false;
+		Lspite.addChild(arr[n]);
+	}
 }
 //设置初始的数据
-function set(n,controlLeft,controlRight,Lspite,pLayer,score,delay,brickArray){
+function set(n,controlLeft,controlRight,Lspite,pLayer,score,delay,brickArray,arr){
 	/*
 	 * n为初始化时层数
 	 * controlLeft为层数的距离最左边的距离
@@ -336,38 +444,89 @@ function set(n,controlLeft,controlRight,Lspite,pLayer,score,delay,brickArray){
 	var blHeight = 62;
 	var renOffsetX = -10;
 	var renOffsetY =90;
-	
+	var px;
+	var py;
+	var pr = 0.7;
 	for(var i = 0; i < n; i++) {
+		var rdom = Math.random();
+		px = positionX;
+		py = positionY;
 		if(i == 0) {
-			brickArray[i] = new brick(positionX, positionY,score,delay,0,i);		
+			brickArray[i] = new brick(positionX, positionY,score,delay,0,i,'brick');		
 			player = new person(positionX-renOffsetX, positionY-renOffsetY,0)
 			Lspite.addChild(brickArray[i]);
 			pLayer.addChild(player);
+			arr[i] = new brick(px, py,score,delay,0,i,'brick1');
+			arr[i].increment = blHeight;
+			Lspite.addChild(arr[i]);
+			arr[i].visible = false;
 		} else {
 			if(positionX + brWidth > controlRight) {
 				positionX -= blWidth;
 				positionY -= blHeight;
 				brickArray[i-1].increment = blHeight;
+				if(rdom>pr)
+				{
+					px += brWidth;
+					py -= brHeight;
+				}
 			} else if(positionX - blWidth < controlLeft) {
 				positionX += brWidth;
 				positionY -= brHeight;
 				brickArray[i-1].increment = brHeight;
+				if(rdom > pr) {
+					px -= blWidth;
+					py -= blHeight;
+				}
 			} else {
 				var rd = Math.random();
 				if(rd > 0.5) {
 					positionX += brWidth;
 					positionY -= brHeight;
 					brickArray[i-1].increment = brHeight;
+					if(rdom>pr)
+					{
+						px -= blWidth;
+						py -= blHeight;
+					}
 				} else {
 					positionX -= blWidth;
 					positionY -= blHeight;
-					increment = blHeight;
+					if(rdom>pr)
+					{
+						px += brWidth;
+						py -= brHeight;
+					}
 					brickArray[i-1].increment = blHeight;	
 				}
 			}	
-			brickArray[i] = new brick(positionX, positionY,score,delay,0,i);
+			var bscore = 1+parseInt(Math.random()*(maxNum-1));
+			brickArray[i] = new brick(positionX, positionY,score,delay,0,i,'brick');
 			Lspite.addChild(brickArray[i]);
+			if(rdom>pr)
+			{
+				var bscore = -1+parseInt(Math.random()*(minNum+1));
+				arr[i] = new brick(px, py,score,delay,0,i,'brick1');
+				arr[i].increment = blHeight;
+				Lspite.addChild(arr[i]);
+			}else{
+				arr[i] = new brick(px, py,score,delay,0,i,'brick1');
+				arr[i].increment = blHeight;
+				Lspite.addChild(arr[i]);
+				arr[i].visible = false;
+			}
 		}
 	}
-	
+}
+
+function scoreBacks(x,y,score){
+	base(this,LSprite,[]);
+	var self = this;
+	self.x = x;//横坐标
+	self.y = y;//纵坐标
+	//图片
+	self.bitmap = getBitmap(imgList['scoreBack']);
+	self.addChild(self.bitmap);
+	self.txt = new setText(210,54,32,score,'#ecb908',true);
+	self.addChild(self.txt);
 }

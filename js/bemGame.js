@@ -1,5 +1,5 @@
 //生成文字
-function setText(x,y,size,text,color,weight)
+function setText(x,y,size,text,color,weight,stroke)
 {
 	/*
 	 * x为文字的横坐标
@@ -14,6 +14,13 @@ function setText(x,y,size,text,color,weight)
 	word.text = text;
 	word.color = color;
 	word.size = size;
+	if(stroke == true)
+	{
+		word.stroke = true;
+		word.lineWidth = 4;
+		word.lineColor = "#ffffff";
+	}
+	
 	var self = this;
 	self.x = x;
 	self.y = y;
@@ -22,6 +29,7 @@ function setText(x,y,size,text,color,weight)
 		word.weight ="bolder";
 	}
 	self.addChild(word);
+	
 }
 //变大变小
 function bigAndSmall(tween,x,y,time,scales,delayTime,loops){

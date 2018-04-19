@@ -27,6 +27,7 @@ var imgAll = [
 	{path:url+'img/back.jpg',type:'img',name:'back'},
 	{path:url+'img/gameBack.jpg',type:'img',name:'gameBack'},
 	{path:url+'img/brick.png',type:'img',name:'brick'},
+	{path:url+'img/brick1.png',type:'img',name:'brick1'},
 	{path:url+'img/ren.png',type:'img',name:'ren'},
 	{path:url+'img/music.png',type:'img',name:'music'},	//音乐
 	{path:url+'img/share1.png',type:'img',name:'share1'},//分享
@@ -68,10 +69,16 @@ var imgAll = [
 	{path:url+'img/result2.png',type:'img',name:'result2'},
 	{path:url+'img/result3.png',type:'img',name:'result3'},
 	{path:url+'img/result4.png',type:'img',name:'result4'},
+	{path:url+'img/result5.png',type:'img',name:'result5'},
 	{path:url+'img/resc1.png',type:'img',name:'resc1'},
 	{path:url+'img/resc2.png',type:'img',name:'resc2'},
 	{path:url+'img/resc3.png',type:'img',name:'resc3'},
 	{path:url+'img/resc0.png',type:'img',name:'resc0'},
+	{path:url+'img/scoreBack.png',type:'img',name:'scoreBack'},
+	{path:url+'img/scores.png',type:'img',name:'scores'},
+	{path:url+'img/ren1.png',type:'img',name:'ren1'},
+	{path:url+'img/rhand.png',type:'img',name:'rhand'},
+	{path:url+'img/lhand.png',type:'img',name:'lhand'},
 ];
 //游戏初始化
 LInit(1000 / 40, "fengE", 750, 1206, main);
